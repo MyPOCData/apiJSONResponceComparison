@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="ResponseComparison" parallel="methods" thread-count="2">
+  <test name="Compare Test">
+    <classes>
+ <!--     <parameter name="param1" value="2"></parameter>
+      <parameter name="param2" value="and a string parameter"></parameter> -->
+      <class name="com.gojek.api.client.GetAPITest"/>
+    </classes>
+  </test>
+</suite>

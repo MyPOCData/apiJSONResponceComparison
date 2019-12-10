@@ -1,20 +1,22 @@
 package com.gojek.api.base;
 
-import java.io.FileInputStream;
-
+import java.io.File;
 import java.io.IOException;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-
-import java.util.Scanner;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.json.JSONObject;
 
 
@@ -22,48 +24,11 @@ public class BaseUtil {
 	
 	RestClient restClient;
 	CloseableHttpResponse closebaleHttpResponse;
+	List<String> urlsFile1;
+	List<String> urlsFile2;
+	long flag;
+	Sheet sheet;
 
-	// Pass file name and get no. of lines it that file
-	public long lineCount(String fileName) {
-		Path path = Paths.get(fileName);
-		long count=0;
-		try {
-			count = Files.lines(path).count();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return count;
-	}
-	
-	public List<String> readFile(String fileName) throws IOException {		
-		FileInputStream inputStream = null;
-		Scanner sc = null;
-		List<String> urls = new ArrayList<String>();						
-		try {
-		    inputStream = new FileInputStream(fileName);
-		    sc = new Scanner(inputStream, "UTF-8");
-		    while (sc.hasNextLine()) {
-		        String line = sc.nextLine();
-		        urls.add(line);
-//		        System.out.println(line);
-		    }
-		    // note that Scanner suppresses exceptions
-//		    if (sc.ioException() != null) {
-//		        throw sc.ioException();
-//		    }
-		} finally {
-		    if (inputStream != null) {
-		        inputStream.close();
-		    }
-		    if (sc != null) {
-		        sc.close();
-		    }
-		}
-		return urls;
-	}
-
-	
 	public JSONObject getAPIResponce(String url) throws ClientProtocolException, IOException{
 		restClient = new RestClient();
 		closebaleHttpResponse = restClient.get(url);
@@ -81,32 +46,53 @@ public class BaseUtil {
 		return isEqual;
 	}
 	
-	public final static void main(String[] args) throws IOException {
-		String pathFile1 = "//Users//b0097042//eclipse-workspace//ApiResponceComp//Files//File1.txt";
-		String pathFile2 = "//Users//b0097042//eclipse-workspace//ApiResponceComp//Files//File2.txt";
-		BaseUtil baseUtil = new BaseUtil();
-		
-		long linesCountFile1 = baseUtil.lineCount(pathFile1);
-		List<String> urlsFile1 = baseUtil.readFile(pathFile1);	
-		long linesCountFile2 = baseUtil.lineCount(pathFile2);
-		List<String> urlsFile2 = baseUtil.readFile(pathFile2);
-		
-		if(linesCountFile1<=linesCountFile2) {
-			for(int i=0; i<urlsFile1.size(); i++) {
-				boolean isEqual = baseUtil.compareJSONResponce(urlsFile1.get(i), urlsFile2.get(i));
-				if(isEqual)
-					System.out.println(urlsFile1.get(i) + " equals " + urlsFile2.get(i));
-				else
-					System.out.println(urlsFile1.get(i) + " not equals " + urlsFile2.get(i));
+	public Iterator<Row> readRowsFromSheet(String fileLocation) throws EncryptedDocumentException, InvalidFormatException, IOException{
+		File urlFile = new File(fileLocation);
+		Workbook workbook = WorkbookFactory.create(urlFile);
+		sheet = workbook.getSheetAt(0);
+		Iterator<Row> rowIterator = sheet.iterator();
+		return rowIterator;
+	}
+	
+	public String readURL(Iterator<Row> linesOfFile) {
+		DataFormatter dataFormatter = new DataFormatter();
+		String urlF1=null;
+		Row rowF1 = linesOfFile.next();
+		Iterator<Cell> cellIterator1 = rowF1.cellIterator();				
+		while (cellIterator1.hasNext()) {
+            Cell cell = cellIterator1.next();
+            urlF1 = dataFormatter.formatCellValue(cell);
+		}	
+		return urlF1;
+	}
+	
+	public Object[][] setUrlsIn2DArray(String filePath1, String filePath2) throws IOException {
+		String testData[][] = null;
+		int i=0;
+		int size =0;
+		try {
+			Iterator<Row> linesOfFile1 = readRowsFromSheet(filePath1);
+			int totalURLsF1 = sheet.getLastRowNum();
+			Iterator<Row> linesOfFile2 = readRowsFromSheet(filePath2);
+			int totalURLsF2 = sheet.getLastRowNum();
+			Iterator<Row> setOfUrls;
+			if(totalURLsF1<=totalURLsF2) {
+				size = totalURLsF1;
+				setOfUrls = linesOfFile1;
+			}else {
+				size = totalURLsF2;
+				setOfUrls = linesOfFile2;
 			}
-		}else {
-			for(int i=0; i<urlsFile2.size(); i++) {
-				boolean isEqual = baseUtil.compareJSONResponce(urlsFile1.get(i), urlsFile2.get(i));
-				if(isEqual)
-					System.out.println(urlsFile1.get(i) + " equals " + urlsFile2.get(i));
-				else
-					System.out.println(urlsFile1.get(i) + " not equals " + urlsFile2.get(i));
+			testData = new String[size][2];			
+			while (setOfUrls.hasNext()) {								
+				testData[i][0] = readURL(linesOfFile1);
+				testData[i][1] = readURL(linesOfFile2);;
+				i++;
 			}
+		} catch (Exception e) {
 		}
-    }
+		return testData;
+	}
+
+	
 }

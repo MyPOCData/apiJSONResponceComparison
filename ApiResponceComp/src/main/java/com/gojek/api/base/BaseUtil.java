@@ -68,7 +68,9 @@ public class BaseUtil {
 		return urlF1;
 	}
 	
-	public Object[][] setUrlsIn2DArray(String filePath1, String filePath2) throws IOException {
+	public Object[][] setUrlsIn2DArray(String file1, String file2) throws IOException {
+		String filePath1 = System.getProperty("user.dir")+File.separator+"Files"+File.separator+file1;
+		String filePath2 = System.getProperty("user.dir")+File.separator+"Files"+File.separator+file2;
 		String testData[][] = null;
 		int i=0;
 		int size =0;

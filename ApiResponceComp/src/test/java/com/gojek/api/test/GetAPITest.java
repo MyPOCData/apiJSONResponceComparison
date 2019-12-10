@@ -9,14 +9,15 @@ import org.testng.annotations.Test;
 import com.gojek.api.base.BaseUtil;
 
 public class GetAPITest extends BaseUtil { 
-
-	String pathFile1 = "//Users//b0097042//git//apiJSONResponceComparison///ApiResponceComp//Files//File1.xlsx";
-	String pathFile2 = "//Users//b0097042//git//apiJSONResponceComparison///ApiResponceComp//Files//File2.xlsx";
+	
 	BaseUtil baseUtil = new BaseUtil();
 	    
 	@DataProvider(name="data-provider")
+//	@Parameters({"file1","file2"})
 	public Object[][] userFormData() throws Exception{
-		Object[][] data = setUrlsIn2DArray(pathFile1, pathFile2);
+		String fileName1 = "File1.xlsx";
+		String fileName2 = "File2.xlsx";
+		Object[][] data = setUrlsIn2DArray(fileName1, fileName2);
 		return data;
 	}
 	    

@@ -1,4 +1,4 @@
-package com.gojek.api.client;
+package com.gojek.api.test;
 
 import java.io.IOException;
 

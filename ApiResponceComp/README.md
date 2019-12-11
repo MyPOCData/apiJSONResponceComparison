@@ -38,9 +38,10 @@ User have two files. Each file contain set of urls line by line. Pick urls from 
 
 
 #How to Execute
-1. -->Open terminal
-2. -->Reach project location by using cd command (cd /Users/.../apiJSONResponceComparison/ApiResponceComp)
-3. -->Then pass command "mvn test" and press enter
+1. -->In testng.xml file pass threadcount value of parallel execution (to make fast execution)
+2. -->Open terminal
+3. -->Reach project location by using cd command (cd /Users/.../apiJSONResponceComparison/ApiResponceComp)
+4. -->Then pass command "mvn test" and press enter
 
 
 #Input

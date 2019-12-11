@@ -35,16 +35,28 @@ public class BaseUtil {
 		restClient = new RestClient();
 		closebaleHttpResponse = restClient.get(url);
 		int statusCode = closebaleHttpResponse.getStatusLine().getStatusCode();
+		if(statusCode!=200) {
+			return null;
+		}
 		String responseString = EntityUtils.toString(closebaleHttpResponse.getEntity(), "UTF-8");		
 		JSONObject responseJson = new JSONObject(responseString);	
 		return responseJson;
 	}
 	
+//	public int getStatusCode() {
+//		int statusCode = closebaleHttpResponse.getStatusLine().getStatusCode();
+//		return statusCode;
+//	}
+	
 	public boolean compareJSONResponce(String url1, String url2) throws ClientProtocolException, IOException {
 		boolean isEqual = false;
 		JSONObject jsonResponceFile1 = getAPIResponce(url1);
 		JSONObject jsonResponceFile2 = getAPIResponce(url2);
-		isEqual = jsonResponceFile1.similar(jsonResponceFile2);
+		try {
+			isEqual = jsonResponceFile1.similar(jsonResponceFile2);
+		}catch(Exception e) {
+//			System.out.println(e.getStackTrace().toString());
+		}
 		return isEqual;
 	}
 	

@@ -2,8 +2,8 @@
 <suite name="ResponseComparison" parallel="methods" thread-count="2">
   <test name="Compare Test">
     <classes>
-<!--      <parameter name="file1" value="File1.xlsx"></parameter>
-      <parameter name="file2" value="File2.xlsx"></parameter> -->
+      <parameter name="file1" value="File1.xlsx"></parameter>
+      <parameter name="file2" value="File2.xlsx"></parameter>
       <class name="com.gojek.api.test.GetAPITest"/>
     </classes>
   </test>
